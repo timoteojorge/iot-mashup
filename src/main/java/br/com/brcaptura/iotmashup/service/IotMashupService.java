@@ -48,7 +48,7 @@ public class IotMashupService {
 
     private List<Mashup> mashupList;
 
-    public List<Mashup> search() {
+    public List<Mashup> buildMashups() {
         System.out.println("Buscando projetos...");
         ResponseEntity<GitHubSearchResponse> gitHubSearchResponseResponseEntity
                 = restTemplate.exchange(encode(githubApiURL + "?q=Internet+of+Things"), HttpMethod.GET, null, GitHubSearchResponse.class);

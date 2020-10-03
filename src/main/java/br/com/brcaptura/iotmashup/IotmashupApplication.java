@@ -26,7 +26,7 @@ public class IotmashupApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void buildMashupsOnStartup() {
         try {
-            List<Mashup> mashupList = iotMashupService.search();
+            List<Mashup> mashupList = iotMashupService.buildMashups();
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(mashupList);
             System.out.println("Retornando todos os mashups encontrados: ");
