@@ -7,7 +7,7 @@
 
 Você vai necessitar de uma Twitter consumer key and secret. Abra os arquivos `src/main/resources/application.properties` e `src/test/resources/application-test.properties` e preencha as seguintes propriedades:<br>
 
-`twitter.api.key=${SUA_TWITTER_API_KEY}`
+`twitter.api.key=${SUA_TWITTER_API_KEY}`<br>
 `twitter.api.secret=${SUA_TWITTER_API_SECRET}`
 
 <br>
