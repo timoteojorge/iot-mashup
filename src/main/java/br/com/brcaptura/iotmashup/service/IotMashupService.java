@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class IotMashupService {
+
+    Logger logger = LoggerFactory.getLogger(IotMashupService.class);
 
     @Autowired
     private RestTemplate restTemplate;
@@ -49,13 +53,13 @@ public class IotMashupService {
     private List<Mashup> mashupList;
 
     public List<Mashup> buildMashups() {
-        System.out.println("Buscando projetos...");
+        logger.info("Buscando projetos...");
         ResponseEntity<GitHubSearchResponse> gitHubSearchResponseResponseEntity
                 = restTemplate.exchange(encode(githubApiURL + "?q=Internet+of+Things"), HttpMethod.GET, null, GitHubSearchResponse.class);
         GitHubSearchResponse gitHubSearchResponse = gitHubSearchResponseResponseEntity.getBody();
-        System.out.println(gitHubSearchResponse.getTotalCount() + " projetos encontrados no github");
+        logger.info(gitHubSearchResponse.getTotalCount() + " projetos encontrados no github");
 
-        System.out.println("Buscando resultados de tweets...");
+        logger.info("Buscando resultados de tweets...");
         mashupList = new ArrayList<>();
         return gitHubSearchResponse.getItems().stream().limit(5).map(this::getTwitterMatches).collect(Collectors.toList());
     }
@@ -70,17 +74,18 @@ public class IotMashupService {
             ResponseEntity<TwitterSearchResponse> twitterSearchResponse =
                     restTemplate.exchange(encode(twitterSearchURL + "?q=" + repo.getName()), HttpMethod.GET, new HttpEntity<String>(createTwitterAuthorizationHeaders(bearerToken)), TwitterSearchResponse.class);
             TwitterSearchResponse twitterSearchResponseBody = twitterSearchResponse.getBody();
-            System.out.println(twitterSearchResponseBody.getStatuses().size() + " resultados encontrados para o projeto " + repo.getName());
+            logger.info(twitterSearchResponseBody.getStatuses().size() + " resultados encontrados para o projeto " + repo.getName());
             mashup.getTweetList().addAll(twitterSearchResponseBody.getStatuses());
             return mashup;
         } catch (JsonProcessingException e) {
-            System.out.println("Nao foi possivel autenticar com o twitter!");
+            e.printStackTrace();
+            logger.error("Nao foi possivel autenticar com o twitter!");
         }
         return null;
     }
 
     private String authenticateWithTwitter() throws JsonProcessingException {
-        System.out.println("Autenticando com twitter...");
+        logger.info("Autenticando com twitter...");
         ResponseEntity<String> twitterAuthResponse = restTemplate.exchange
                 (twitterAuthURL, HttpMethod.POST, new HttpEntity<String>(createTwitterAuthenticationHeaders()), String.class);
         ObjectMapper objectMapper = new ObjectMapper();
