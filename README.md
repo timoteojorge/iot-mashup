@@ -7,6 +7,9 @@
 
 Abra o terminal na pasta raiz do projeto e digite:<br>
 `./gradlew clean build -x test`<br>
+Logo em seguida digite:<br>
+`java -jar build/libs/iotmashup-0.0.1-SNAPSHOT.jar` <br>
+
 
 ### Para rodar os testes unitários
 
